@@ -31,51 +31,49 @@ export default function RootLayout({
 
             <div className={`${geistSans.variable} ${geistMono.variable} flex flex-col min-h-screen`}>
 
-           <header className="bg-black text-white p-4">
+           <header className="bg-black text-white p-4 sticky top-0 z-50">
                 <div className="container mx-auto flex justify-between items-center">
-                    <h1 className="text-xl font-bold">
-                        
-                        <Link href="/">Obol App</Link>
+                    <h1 className="text-3xl font-bold">
+                        <Link href="/">YARNIT</Link>
                     </h1>
-                    <ul className="flex space-x-4">
+                    <ul className="flex font-semibold space-x-4">
                         <li>
                             <Link href='/' className="hover:text-pink-500 transition-colors duration-200">Home</Link>
                         </li>
                         <li>
                             <Link href='/about' className="hover:text-pink-500 transition-colors duration-200">About</Link>
                         </li>
+                        <li>
+                            <Link href='/' className="hover:text-pink-500 transition-colors duration-200">Shop Yarn</Link>
+                        </li>
+                        <li>
+                            <Link href='/' className="hover:text-pink-500 transition-colors duration-200">Find Pattern</Link>
+                        </li>
                     </ul>
                 </div>
             </header>
 
-
-            <main className="flex-1 container mx-auto p-4">
+            <main className="flex-1">
                 {children}
             </main>
 
-            <footer className="bg-gradient-to-r from-pink-500 via-pink-400 to-pink-200 text-white p-4 text-center py-10">
-            <h1 className="text-2xl font-bold mb-4">Contact Me</h1>
-            <ul className="flex flex-col items-center space-y-2">
-                <li>
-                <a href="mailto:putrisafa1394@gmail.com"
-                    className="hover:text-black transition-colors duration-200">
-                    Email: putrisafa1394@gmail.com
-                </a>
-                </li>
-                <li>
-                <a href="https://linkedin.com/in/nabiilahputri"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hover:text-black transition-colors duration-200">
-                    LinkedIn: linkedin.com/in/nabiilahputri
-                </a>
-                </li>
-            </ul>
+            <footer className="bg-black text-white p-4 py-15">
+                <h1 className="text-5xl text-center font-bold mb-4 px-4">YARNIT</h1>
+                {/* <div className="flex items-start px-30 space-x-8">
+                    <ul className="flex flex-col space-y-2">
+                        <li className="hover:text-pink-500 transition-colors duration-200">
+                            Contact Us
+                        </li>
+                        <li className="hover:text-pink-500 transition-colors duration-200">
+                            FAQs
+                        </li>
+                    </ul>
+                </div> */}
             </footer>
 
 
-            <footer className="bg-black text-white text-center py-4">
-                <p>&copy; {new Date().getFullYear()} Obol App. All rights reserved.</p>
+            <footer className="bg-black text-white text-center py-2">
+                <p>&copy; {new Date().getFullYear()} by Nabiilah Putri Safa. All rights reserved.</p>
             </footer>
             </div>
         </>
