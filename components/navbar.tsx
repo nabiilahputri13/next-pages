@@ -1,10 +1,12 @@
 'use client'
 
+import { signOut, useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
 const Navbar = () => {
   const pathname = usePathname()
+  const { data: session } = useSession()
 
   const navItems = [
     { name: 'Home', href: '/' },
@@ -27,6 +29,20 @@ const Navbar = () => {
           </Link>
         </li>
       ))}
+
+      {session?.user && (
+        <>
+          <li className="text-stone-400">Hi, {session.user.name?.split(' ')[0]}</li>
+          <li>
+            <button
+              onClick={() => signOut()}
+              className="text-red-500 hover:underline"
+            >
+              Logout
+            </button>
+          </li>
+        </>
+      )}
     </ul>
   )
 }

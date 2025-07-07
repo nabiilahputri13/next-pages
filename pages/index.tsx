@@ -1,18 +1,29 @@
+'use client'
+
 import ButtonBlack from "@/components/button-black"
 import PopularProjects from "@/components/popular-projects"
 import Products from "@/components/products"
 import UpcomingWorkshops from "@/components/workshops"
 import Link from "next/link"
+import { signIn, useSession } from 'next-auth/react'
 
 export default function Home() {
+  const { data: session } = useSession()
+  const user = session?.user
   return (
     <div>
       <section
         className="bg-cover bg-center text-white min-h-[700px] flex items-center justify-center "
         style={{ backgroundImage: "url('/landing-bg.png')" }}>
           <div className="text-center items-cente container mx-auto">
-            <h1 className="text-8xl font-bold mb-4">START YOUR YARN <br/> JOURNEY</h1>
-            <ButtonBlack>CLICK HERE TO START</ButtonBlack>
+            <h1 className="text-8xl font-bold mb-4 whitespace-pre-line">
+            {user ? `Welcome back, ${user.name?.split(' ')[0]}!` : 'START YOUR YARN\nJOURNEY'}
+            </h1>
+            {!user && (
+              <ButtonBlack onClick={() => signIn('google')}>
+                CLICK HERE TO START
+              </ButtonBlack>
+            )}
           </div>
     </section>
 
