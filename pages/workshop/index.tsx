@@ -7,6 +7,8 @@ export default function ShopYarn() {
                 <UpcomingWorkshops/>
                 <UpcomingWorkshops/>
                 <UpcomingWorkshops/>
+                <hr className="border-t border-black my-6" />
+      
             </div>
         </div>
     )

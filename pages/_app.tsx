@@ -4,15 +4,18 @@ import RootLayout from '@/layout'
 import { useRouter } from 'next/router'
 import { SessionProvider } from 'next-auth/react'
 
-export default function App({ Component, pageProps: {session, ...pageProps} }: AppProps) {
+export default function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   const router = useRouter()
-  const metaTitle = router.pathname === '/' ? 'home' : router.pathname.replace('/', '')
+  const path = router.pathname
+  const noLayoutRoutes = ['/register', '/login', '/checkout']
+  const hideLayout = noLayoutRoutes.includes(path)
+  const metaTitle = path === '/' ? 'home' : path.replace('/', '')
 
   return (
     <SessionProvider session={session}>
-    <RootLayout metaTitle={metaTitle}>
-      <Component {...pageProps}/>
-    </RootLayout>
+      <RootLayout metaTitle={metaTitle} hideLayout={hideLayout}>
+        <Component {...pageProps} />
+      </RootLayout>
     </SessionProvider>
   )
 }
