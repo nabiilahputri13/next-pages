@@ -2,7 +2,6 @@
 
 import React from 'react'
 import Image from 'next/image'
-import Link from 'next/link'
 import ButtonBlack from './button-black'
 import ButtonWhite from './button-white'
 

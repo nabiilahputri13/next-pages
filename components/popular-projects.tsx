@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState } from 'react'
 import Image from 'next/image'
 import 'keen-slider/keen-slider.min.css'
 import { useKeenSlider, KeenSliderPlugin } from 'keen-slider/react'
@@ -73,9 +73,9 @@ const Autoplay: KeenSliderPlugin = (slider) => {
 const PopularProjects: React.FC = () => {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [loaded, setLoaded] = useState(false)
-  const sliderRef = useRef<HTMLDivElement | null>(null)
 
-  const [sliderInstanceRef, slider] = useKeenSlider<HTMLDivElement>({
+const [sliderInstanceRef, slider] = useKeenSlider<HTMLDivElement>(
+  {
     loop: true,
     slideChanged(s) {
       setCurrentSlide(s.track.details.rel)
@@ -95,8 +95,10 @@ const PopularProjects: React.FC = () => {
         slides: { perView: 3, spacing: 24 },
       },
     },
-    plugins: [Autoplay],
-  })
+  },
+  [Autoplay] // ✅ Tempat yang benar untuk plugin
+)
+
 
   return (
     <section className="px-10 relative">

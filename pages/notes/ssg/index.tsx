@@ -1,4 +1,4 @@
-import { GetServerSideProps, InferGetServerSidePropsType } from "next"
+import { GetStaticProps, InferGetStaticPropsType } from "next"
 import Link from "next/link"
 
 type ListNotes = {
@@ -15,22 +15,22 @@ type Notes = {
     data: ListNotes[]
 }
 
-export const getServerSideProps = (async () => {
+export const getStaticProps = (async () => {
     const notes = await fetch('https://service.pace11.my.id/api/notes').then(
         (res) => res.json(),
     )
     return {
-        props: { notes }
+        props: { notes }, revalidate: 3
     }
-}) satisfies GetServerSideProps<{ notes: Notes }>
+}) satisfies GetStaticProps<{ notes: Notes }>
 
-export default function NoteServerPage( { notes }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+export default function NoteServerPage( { notes }: InferGetStaticPropsType<typeof getStaticProps>) {
     return ( 
         <div className="container mx-auto p-4">
     <div className="grid grid-cols-4 gap-4">
         {notes?.data.map((note: ListNotes) => (
             <Link 
-            href={`/notes/server/${note.id}`}
+            href={`/notes/ssg/${note.id}`}
             key={ note.id } 
             className="p-4 bg-white shadow-sm rounded">
                 <h1>{ note.title }</h1>

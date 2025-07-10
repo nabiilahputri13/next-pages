@@ -57,9 +57,16 @@ export default function NoteServerPage({
   }
 
   return (
+    <div className="container mx-auto p-4">
     <div className="p-4 bg-white shadow-sm rounded">
       <h1 className="text-xl font-bold">{note.title}</h1>
       <p>{note.description}</p>
+       <p className="text-sm text-gray-500 mt-2">
+          Created at: {note.created_at}
+        </p>
+        <p className="text-sm text-gray-500">Updated at: {note.updated_at}</p>
+
+    </div>
     </div>
   )
 }
