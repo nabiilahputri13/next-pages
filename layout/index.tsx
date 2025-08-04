@@ -4,6 +4,7 @@ import Link from "next/link"
 import styles from '@/styles/Home.module.css'
 import { usePathname } from 'next/navigation'
 import Navbar from "@/components/navbar"
+import { Toaster } from 'react-hot-toast'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -32,6 +33,8 @@ export default function RootLayout({ metaTitle, hideLayout = false, children }: 
       </Head>
 
       <div className={`${geistSans.variable} ${geistMono.variable} flex flex-col min-h-screen`}>
+        {/* Toaster for notifications */}
+        <Toaster position="top-center" reverseOrder={false} />
 
         {/* Header */}
         {!hideLayout && (

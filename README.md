@@ -1,6 +1,6 @@
 ## Introduction to YARNIT 🧶
 
-Hello! It'm me Nabiilah Putri Safa , I'm currently working on this Next.js projcet called YARNIT (ㅅ´ ˘ `). 
+Hello! It'm me Nabiilah Putri Safa, I'm currently working on this Next.js projcet called YARNIT (ㅅ´ ˘ `). 
 
 ![YARNIT Homepage](public/yarnit.png)
 

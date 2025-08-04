@@ -8,7 +8,7 @@ export default function ButtonWhite({ children, onClick, className }: ButtonWhit
   return (
     <button
       onClick={onClick}
-      className={`bg-white border border-black text px-6 py-2 hover:bg-black hover:border hover:text-white transition ${className || ''}`}
+      className={`bg-white border border-black text-black px-6 py-2 hover:bg-black hover:border hover:text-white transition ${className || ''}`}
     >
       {children}
     </button>

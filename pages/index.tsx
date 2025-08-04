@@ -6,6 +6,7 @@ import Products from "@/components/products"
 import UpcomingWorkshops from "@/components/workshops"
 import Link from "next/link"
 import { signIn, useSession } from 'next-auth/react'
+import router from "next/router"
 
 export default function Home() {
   const { data: session } = useSession()
@@ -20,7 +21,7 @@ export default function Home() {
             {user ? `Welcome back, ${user.name?.split(' ')[0]}!` : 'START YOUR YARN\nJOURNEY'}
             </h1>
             {!user && (
-              <ButtonBlack onClick={() => signIn('google')}>
+              <ButtonBlack onClick={() => router.push('/login')}>
                 CLICK HERE TO START
               </ButtonBlack>
             )}
@@ -100,7 +101,7 @@ export default function Home() {
 
       <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold text-center mt-4">All Time Best Selling Yarn</h1>
-      <Products/>
+      <Products search=""/>
       <div className="flex justify-end mt-4">
               <Link href="/shop-yarn" className="text-sm font-bold text-gray-600 hover:underline">
                 View More
@@ -119,7 +120,7 @@ export default function Home() {
 
       <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold text-center mt-4">Upcoming Workshops</h1>
-      <UpcomingWorkshops/>
+      <UpcomingWorkshops search=""/>
       <div className="flex justify-end mt-4">
       <Link href="/workshop" className="text-sm font-bold text-gray-600 hover:underline">
         View More
