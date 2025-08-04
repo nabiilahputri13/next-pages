@@ -1,19 +1,18 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
-import { db } from '@/lib/db'
-import { products } from '@/lib/db/schema'
-import { eq } from 'drizzle-orm'
 import toast from 'react-hot-toast'
 import ButtonBlack from '@/components/button-black'
 import { requireAdmin } from '@/lib/auth/requireAdmin'
 import { GetServerSidePropsContext } from 'next'
+import { patterns } from '@/lib/db/schema'
+import { db } from '@/lib/db'
 
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const auth = await requireAdmin(context)
   if ('redirect' in auth) return auth
 
-  const raw = await db.select().from(products)
+  const raw = await db.select().from(patterns)
   const data = raw.map((p) => ({
     ...p,
     createdAt: p.createdAt?.toISOString(),
@@ -25,14 +24,15 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     },
   }
 }
-export default function UpdateProductPage({ product }: { product: any }) {
-  const router = useRouter()
-  const [name, setName] = useState(product.name || '')
-  const [label, setLabel] = useState(product.label || '')
-  const [price, setPrice] = useState(product.price.toString() || '')
-  const [description, setDescription] = useState(product.description || '')
+
+export default function CreatePatternPage() {
+  const [name, setName] = useState('')
+  const [label, setLabel] = useState('')
+  const [price, setPrice] = useState('')
+  const [description, setDescription] = useState('')
   const [image, setImage] = useState<File | null>(null)
-  const [previewUrl, setPreviewUrl] = useState<string | null>(product.imageUrl || null)
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const router = useRouter()
 
   useEffect(() => {
     if (image) {
@@ -40,9 +40,9 @@ export default function UpdateProductPage({ product }: { product: any }) {
       setPreviewUrl(url)
       return () => URL.revokeObjectURL(url)
     } else {
-      setPreviewUrl(product.imageUrl || null)
+      setPreviewUrl(null)
     }
-  }, [image, product.imageUrl])
+  }, [image])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -50,35 +50,34 @@ export default function UpdateProductPage({ product }: { product: any }) {
     const formData = new FormData()
     formData.append('name', name)
     formData.append('label', label)
-    formData.append('description', description)
     formData.append('price', price)
-    if (image) {
-      formData.append('image', image)
-    }
+    formData.append('description', description)
+    if (image) formData.append('image', image)
 
-    const res = await fetch(`/api/products/${product.id}`, {
-      method: 'PUT',
+    const res = await fetch('/api/patterns', {
+      method: 'POST',
       body: formData,
     })
 
     if (res.ok) {
-      toast.success('Product updated!')
-      setTimeout(() => router.push('/admin/products'), 1500)
+      toast.success('Pattern created!')
+      setTimeout(() => {
+        router.push('/admin/patterns')
+      }, 1500)
     } else {
-      toast.error('Update failed')
-      
+      toast.error('Failed to create pattern')
     }
   }
 
   return (
     <div className="p-8 max-w-xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Update Product</h1>
+      <h1 className="text-2xl font-bold mb-4">Create Pattern</h1>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4" encType="multipart/form-data">
         <div>
-          <label htmlFor="name" className="text-l font-semibold">Product name</label>
+          <label htmlFor="name" className="text-l font-semibold">Pattern name</label>
           <input
             type="text"
-            placeholder="Product Name"
+            placeholder="Pattern Name"
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
@@ -87,10 +86,10 @@ export default function UpdateProductPage({ product }: { product: any }) {
         </div>
 
         <div>
-          <label htmlFor="label" className="text-l font-semibold">Product label</label>
+          <label htmlFor="label" className="text-l font-semibold">Pattern label</label>
           <input
             type="text"
-            placeholder="Product Label"
+            placeholder="Pattern Label"
             value={label}
             onChange={(e) => setLabel(e.target.value)}
             required
@@ -99,9 +98,9 @@ export default function UpdateProductPage({ product }: { product: any }) {
         </div>
 
         <div>
-          <label htmlFor="description" className="text-l font-semibold">Product description</label>
+          <label htmlFor="description" className="text-l font-semibold">Pattern description</label>
           <textarea
-            placeholder="Product Description"
+            placeholder="Pattern Description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             required
@@ -110,7 +109,7 @@ export default function UpdateProductPage({ product }: { product: any }) {
         </div>
 
         <div>
-          <label htmlFor="price" className="text-l font-semibold">Product price</label>
+          <label htmlFor="price" className="text-l font-semibold">Pattern price</label>
           <input
             type="number"
             placeholder="Price"
@@ -122,9 +121,9 @@ export default function UpdateProductPage({ product }: { product: any }) {
         </div>
 
         <div>
-          <label htmlFor="image" className="text-l font-semibold">Product image</label>
+          <label htmlFor="image" className="text-l font-semibold">Pattern image</label>
           <div
-            className="w-full border p-4 flex flex-col items-center mt-2 cursor-pointer"
+            className="w-full border p-4 flex flex-col items-center mt-2"
             onClick={() => document.getElementById('imageInput')?.click()}
             onDrop={(e) => {
                 e.preventDefault()
@@ -139,7 +138,7 @@ export default function UpdateProductPage({ product }: { product: any }) {
               <img
                 src={previewUrl}
                 alt="Preview"
-                className="w-full h-70 object-cover rounded"
+                className="w-full h-130 object-cover"
               />
             ) : (
               <div className="w-full h-70 bg-gray-300 flex items-center justify-center">
@@ -147,7 +146,7 @@ export default function UpdateProductPage({ product }: { product: any }) {
               </div>
             )}
             <p className="text-sm text-gray-600 mt-2">
-              {image ? image.name : 'Click image to change'}
+              {image ? image.name : ''}
             </p>
           </div>
           <input
@@ -160,7 +159,7 @@ export default function UpdateProductPage({ product }: { product: any }) {
         </div>
 
         <ButtonBlack type="submit" className="w-full">
-          Update Product
+          Create pattern
         </ButtonBlack>
       </form>
     </div>

@@ -2,6 +2,27 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import toast from 'react-hot-toast'
 import ButtonBlack from '@/components/button-black'
+import { requireAdmin } from '@/lib/auth/requireAdmin'
+import { GetServerSidePropsContext } from 'next'
+import { products } from '@/lib/db/schema'
+import { db } from '@/lib/db'
+
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const auth = await requireAdmin(context)
+  if ('redirect' in auth) return auth
+
+  const raw = await db.select().from(products)
+  const data = raw.map((p) => ({
+    ...p,
+    createdAt: p.createdAt?.toISOString(),
+  }))
+
+  return {
+    props: {
+      data, // ✅ cukup kirim datanya aja
+    },
+  }
+}
 
 export default function CreateProductPage() {
   const [name, setName] = useState('')

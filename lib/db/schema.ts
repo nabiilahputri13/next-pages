@@ -30,3 +30,14 @@ export const products = pgTable('products', {
   imageUrl: text('image_url').notNull(),
   createdAt: timestamp('created_at').defaultNow()
 })
+
+export const patterns = pgTable('patterns', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  name: text('name').notNull(),
+  label: text('label').notNull(),
+  price: integer('price').notNull(),
+  description: text('description'),
+  imageUrl: text('image_url').notNull(),
+  rating: integer('rating').notNull().default(5),
+  createdAt: timestamp('created_at').defaultNow()
+})

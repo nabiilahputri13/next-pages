@@ -6,16 +6,25 @@ import { patterns } from '@/lib/db/schema'
 import Image from 'next/image'
 import router from 'next/router'
 import toast from 'react-hot-toast'
+import { requireAdmin } from '@/lib/auth/requireAdmin'
+import { GetServerSidePropsContext } from 'next'
 
-export async function getServerSideProps() {
+
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const auth = await requireAdmin(context)
+  if ('redirect' in auth) return auth
+
   const raw = await db.select().from(patterns)
-
   const data = raw.map((p) => ({
     ...p,
-    createdAt: p.createdAt?.toISOString(), 
+    createdAt: p.createdAt?.toISOString(),
   }))
 
-  return { props: { data } }
+  return {
+    props: {
+      data, // ✅ cukup kirim datanya aja
+    },
+  }
 }
 
 export default function patternsPage({ data }: { data: any[] }) {
@@ -36,19 +45,19 @@ export default function patternsPage({ data }: { data: any[] }) {
   }
 
   return (
-    <section className="my-6 w-full mx-auto max-w-screen-2xl">
+    <section className="my-6 px-4 mx-auto max-w-screen-xl">
       <div className="p-8">
-        {/* <div className="flex flex-col sm:flex-row sm:justify-between gap-2 mb-6 w-full"> */}
-          {/* <h1 className="text-2xl font-bold">Pattern List</h1>
+        <div className="flex flex-col sm:flex-row sm:justify-between gap-2 mb-6 w-full">
+          <h1 className="text-2xl font-bold">Pattern List</h1>
           <ButtonBlack onClick={() => router.push('/admin/create-pattern')}>
             + Add New Pattern
-          </ButtonBlack> */}
-        {/* </div> */}
+          </ButtonBlack>
+        </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {data.map((pattern) => (
-            <div key={pattern.id} className=" p-4 w-full">
-              <div className="relative w-full h-120">
+            <div key={pattern.id} className="border p-4 w-full">
+              <div className="relative w-full h-90">
                             <Image
                               src={pattern.imageUrl}
                               alt={pattern.name}
@@ -63,9 +72,34 @@ export default function patternsPage({ data }: { data: any[] }) {
               <h3 className="text-sm text-gray-700 line-clamp-2">{pattern.description}</h3>
               <p className="text-gray-600">IDR{pattern.price.toLocaleString('id-ID')}</p>
               <div className="flex flex-col sm:flex-row sm:justify-between gap-2 mt-4 w-full">
-                              <ButtonBlack className="w-full sm:w-1/2">+ Add to Cart</ButtonBlack>
-                              <ButtonWhite className="w-full sm:w-1/2" onClick={() => router.push(`/find-pattern/${pattern.id}`)}>Details</ButtonWhite>
-                            </div>
+                <ButtonBlack
+                  className="w-full sm:w-1/2"
+                  onClick={() => router.push(`/admin/update-pattern/${pattern.id}`)}
+                >
+                  Update
+                </ButtonBlack>
+                <ButtonWhite className="w-full sm:w-1/2"
+                onClick={async () => {
+                    const confirmDelete = confirm('Are you sure you want to delete this pattern?')
+                    if (!confirmDelete) return
+
+                    const res = await fetch(`/api/patterns/${pattern.id}`, {
+                    method: 'DELETE',
+                    })
+
+                    if (res.ok) {
+      toast.success('Product deleted successfully!')
+      setTimeout(() => {
+        router.push('/admin/patterns')
+      }, 1500)
+    } else {
+      toast.error('Failed to deleted product')
+    }
+                }}
+                >
+                Delete
+                </ButtonWhite>
+              </div>
             </div>
           ))}
         </div>

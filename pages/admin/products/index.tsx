@@ -5,17 +5,27 @@ import { db } from '@/lib/db'
 import { products } from '@/lib/db/schema'
 import Image from 'next/image'
 import router from 'next/router'
+import toast from 'react-hot-toast'
+import { requireAdmin } from '@/lib/auth/requireAdmin'
+import { GetServerSidePropsContext } from 'next'
 
-export async function getServerSideProps() {
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const auth = await requireAdmin(context)
+  if ('redirect' in auth) return auth
+
   const raw = await db.select().from(products)
-
   const data = raw.map((p) => ({
     ...p,
-    createdAt: p.createdAt?.toISOString(), 
+    createdAt: p.createdAt?.toISOString(),
   }))
 
-  return { props: { data } }
+  return {
+    props: {
+      data, // ✅ cukup kirim datanya aja
+    },
+  }
 }
+
 
 export default function ProductsPage({ data }: { data: any[] }) {
   const handleDelete = async (id: string) => {
@@ -27,10 +37,12 @@ export default function ProductsPage({ data }: { data: any[] }) {
     })
 
     if (res.ok) {
-      alert('Product deleted successfully')
-      router.reload() // refresh the product list
+      toast.success('Product deleted successfully!')
+      setTimeout(() => {
+        router.push('/admin/products')
+      }, 1500)
     } else {
-      alert('Failed to delete product')
+      toast.error('Failed to delete product')
     }
   }
 
@@ -67,24 +79,11 @@ export default function ProductsPage({ data }: { data: any[] }) {
                 >
                   Update
                 </ButtonBlack>
-                <ButtonWhite className="w-full sm:w-1/2"
-                onClick={async () => {
-                    const confirmDelete = confirm('Are you sure you want to delete this product?')
-                    if (!confirmDelete) return
-
-                    const res = await fetch(`/api/products/${product.id}`, {
-                    method: 'DELETE',
-                    })
-
-                    if (res.ok) {
-                    alert('Product deleted successfully')
-                    router.reload()
-                    } else {
-                    alert('Failed to delete product')
-                    }
-                }}
+                <ButtonWhite
+                  className="w-full sm:w-1/2"
+                  onClick={() => handleDelete(product.id)}
                 >
-                Delete
+                  Delete
                 </ButtonWhite>
               </div>
             </div>

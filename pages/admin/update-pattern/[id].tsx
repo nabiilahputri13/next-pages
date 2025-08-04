@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { db } from '@/lib/db'
-import { products } from '@/lib/db/schema'
+import { patterns } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
 import toast from 'react-hot-toast'
 import ButtonBlack from '@/components/button-black'
@@ -13,7 +13,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const auth = await requireAdmin(context)
   if ('redirect' in auth) return auth
 
-  const raw = await db.select().from(products)
+  const raw = await db.select().from(patterns)
   const data = raw.map((p) => ({
     ...p,
     createdAt: p.createdAt?.toISOString(),
@@ -25,14 +25,15 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     },
   }
 }
-export default function UpdateProductPage({ product }: { product: any }) {
+
+export default function UpdatepatternPage({ pattern }: { pattern: any }) {
   const router = useRouter()
-  const [name, setName] = useState(product.name || '')
-  const [label, setLabel] = useState(product.label || '')
-  const [price, setPrice] = useState(product.price.toString() || '')
-  const [description, setDescription] = useState(product.description || '')
+  const [name, setName] = useState(pattern.name || '')
+  const [label, setLabel] = useState(pattern.label || '')
+  const [price, setPrice] = useState(pattern.price.toString() || '')
+  const [description, setDescription] = useState(pattern.description || '')
   const [image, setImage] = useState<File | null>(null)
-  const [previewUrl, setPreviewUrl] = useState<string | null>(product.imageUrl || null)
+  const [previewUrl, setPreviewUrl] = useState<string | null>(pattern.imageUrl || null)
 
   useEffect(() => {
     if (image) {
@@ -40,9 +41,9 @@ export default function UpdateProductPage({ product }: { product: any }) {
       setPreviewUrl(url)
       return () => URL.revokeObjectURL(url)
     } else {
-      setPreviewUrl(product.imageUrl || null)
+      setPreviewUrl(pattern.imageUrl || null)
     }
-  }, [image, product.imageUrl])
+  }, [image, pattern.imageUrl])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -56,14 +57,14 @@ export default function UpdateProductPage({ product }: { product: any }) {
       formData.append('image', image)
     }
 
-    const res = await fetch(`/api/products/${product.id}`, {
+    const res = await fetch(`/api/patterns/${pattern.id}`, {
       method: 'PUT',
       body: formData,
     })
 
     if (res.ok) {
-      toast.success('Product updated!')
-      setTimeout(() => router.push('/admin/products'), 1500)
+      toast.success('Pattern updated!')
+      setTimeout(() => router.push('/admin/patterns'), 1500)
     } else {
       toast.error('Update failed')
       
@@ -72,13 +73,13 @@ export default function UpdateProductPage({ product }: { product: any }) {
 
   return (
     <div className="p-8 max-w-xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Update Product</h1>
+      <h1 className="text-2xl font-bold mb-4">Update pattern</h1>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4" encType="multipart/form-data">
         <div>
-          <label htmlFor="name" className="text-l font-semibold">Product name</label>
+          <label htmlFor="name" className="text-l font-semibold">Pattern name</label>
           <input
             type="text"
-            placeholder="Product Name"
+            placeholder="Pattern Name"
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
@@ -87,10 +88,10 @@ export default function UpdateProductPage({ product }: { product: any }) {
         </div>
 
         <div>
-          <label htmlFor="label" className="text-l font-semibold">Product label</label>
+          <label htmlFor="label" className="text-l font-semibold">Pattern label</label>
           <input
             type="text"
-            placeholder="Product Label"
+            placeholder="Pattern Label"
             value={label}
             onChange={(e) => setLabel(e.target.value)}
             required
@@ -99,9 +100,9 @@ export default function UpdateProductPage({ product }: { product: any }) {
         </div>
 
         <div>
-          <label htmlFor="description" className="text-l font-semibold">Product description</label>
+          <label htmlFor="description" className="text-l font-semibold">Pattern description</label>
           <textarea
-            placeholder="Product Description"
+            placeholder="Pattern Description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             required
@@ -110,7 +111,7 @@ export default function UpdateProductPage({ product }: { product: any }) {
         </div>
 
         <div>
-          <label htmlFor="price" className="text-l font-semibold">Product price</label>
+          <label htmlFor="price" className="text-l font-semibold">Pattern price</label>
           <input
             type="number"
             placeholder="Price"
@@ -122,7 +123,7 @@ export default function UpdateProductPage({ product }: { product: any }) {
         </div>
 
         <div>
-          <label htmlFor="image" className="text-l font-semibold">Product image</label>
+          <label htmlFor="image" className="text-l font-semibold">Pattern image</label>
           <div
             className="w-full border p-4 flex flex-col items-center mt-2 cursor-pointer"
             onClick={() => document.getElementById('imageInput')?.click()}
@@ -139,7 +140,7 @@ export default function UpdateProductPage({ product }: { product: any }) {
               <img
                 src={previewUrl}
                 alt="Preview"
-                className="w-full h-70 object-cover rounded"
+                className="w-full h-130 object-cover"
               />
             ) : (
               <div className="w-full h-70 bg-gray-300 flex items-center justify-center">
@@ -160,7 +161,7 @@ export default function UpdateProductPage({ product }: { product: any }) {
         </div>
 
         <ButtonBlack type="submit" className="w-full">
-          Update Product
+          Update pattern
         </ButtonBlack>
       </form>
     </div>

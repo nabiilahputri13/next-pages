@@ -48,8 +48,8 @@ const Navbar = () => {
                 href={item.href}
                 className={`transition-colors duration-200 ${
                   pathname === item.href
-                    ? 'text-stone-400'
-                    : 'hover:text-stone-400'
+                    ? 'text-stone-300'
+                    : 'hover:text-stone-300'
                 }`}
               >
                 {item.name}

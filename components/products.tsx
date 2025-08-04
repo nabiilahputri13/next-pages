@@ -62,7 +62,7 @@ const Products: React.FC<ProductsProps> = ({ search= "" }) => {
                 {product.label}
               </span>
               <h3 className="font-bold text-lg mt-2">{product.name}</h3>
-              <p className="font-semibold mt-1">{product.price}</p>
+              <p className="font-semibold mt-1">IDR{product.price}</p>
               <div className="flex justify-between gap-2 mt-2">
                 <ButtonBlack className='mt-2'>Add to Cart</ButtonBlack>
                 <ButtonWhite className='mt-2'>Buy Now</ButtonWhite>

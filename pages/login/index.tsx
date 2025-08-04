@@ -1,9 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import ButtonBlack from '@/components/button-black'
 import { useRouter } from 'next/navigation'
+import { signIn } from 'next-auth/react'
 import { toast } from 'react-hot-toast'
+import ButtonBlack from '@/components/button-black'
 
 export default function Login() {
   const router = useRouter()
@@ -19,25 +20,17 @@ export default function Login() {
       return
     }
 
-    try {
-      const res = await fetch('/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
-      })
+    const res = await signIn('credentials', {
+      redirect: false,
+      username,
+      password,
+    })
 
-      const data = await res.json()
-
-      if (!res.ok) {
-        setError(data.error || 'Login failed')
-        return
-      }
-
+    if (res?.error) {
+      setError(res.error)
+    } else {
       toast.success('Login successful!')
-      setTimeout(() => router.push('/'), 1500)
-    } catch (err) {
-      console.error(err)
-      setError('Something went wrong.')
+      router.push('/')
     }
   }
 
@@ -74,12 +67,17 @@ export default function Login() {
           {error && <p className="text-red-400 text-sm text-center">{error}</p>}
 
           <div>
-            <ButtonBlack type="submit" className="w-full mt-5 justify-center rounded-xl border-white">Login</ButtonBlack>
+            <ButtonBlack type="submit" className="w-full mt-5 justify-center rounded-xl border-white">
+              Login
+            </ButtonBlack>
           </div>
         </form>
 
         <p className="text-center text-sm mt-8">
-          Haven’t had an account? <a href="/register" className="underline hover:text-gray-300">Register</a>
+          Haven’t had an account?{' '}
+          <a href="/register" className="underline hover:text-gray-300">
+            Register
+          </a>
         </p>
       </div>
     </div>
