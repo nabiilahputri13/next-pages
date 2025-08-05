@@ -59,9 +59,9 @@ export default function patternsPage({ data }: { data: any[] }) {
               <span className="text-xs bg-gray-200 px-2 py-1 mt-4 inline-block w-max">
                 {pattern.label}
               </span>
-              <h2 className="text-xl font-bold">{pattern.name}</h2>
+              <h2 className="font-bold text-lg mt-2">{pattern.name}</h2>
               <h3 className="text-sm text-gray-700 line-clamp-2">{pattern.description}</h3>
-              <p className="text-gray-600">IDR{pattern.price.toLocaleString('id-ID')}</p>
+              <p className="font-semibold mt-1">IDR{pattern.price.toLocaleString('id-ID')}</p>
               <div className="flex flex-col sm:flex-row sm:justify-between gap-2 mt-4 w-full">
                               <ButtonBlack className="w-full sm:w-1/2">+ Add to Cart</ButtonBlack>
                               <ButtonWhite className="w-full sm:w-1/2" onClick={() => router.push(`/find-pattern/${pattern.id}`)}>Details</ButtonWhite>

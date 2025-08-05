@@ -81,10 +81,10 @@ export default function PatternDetail({ pattern }: { pattern: any }) {
       <hr className="my-6 border-t border-black" />
 
       <section>
-        <div className="flex flex-col sm:flex-row sm:justify-center items-center mb-6 w-full">
-          <h1 className="text-2xl font-bold">More Like</h1>
-          <h1 className="text-2xl font-bold text-orange-900">{pattern.name}</h1>
-        </div>
+        <div className="flex flex-col justify-center items-center mb-6 w-full">
+  <h1 className="text-2xl font-bold">More Like</h1>
+  <h1 className="text-2xl font-bold text-orange-900 mt-2">{pattern.name}</h1>
+</div>
       </section>
     </div>
   )

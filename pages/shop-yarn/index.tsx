@@ -4,6 +4,7 @@ import { db } from '@/lib/db'
 import { products } from '@/lib/db/schema'
 import Image from 'next/image'
 import router from 'next/router'
+import toast from 'react-hot-toast'
 
 export async function getServerSideProps() {
   const raw = await db.select().from(products)
@@ -17,6 +18,22 @@ export async function getServerSideProps() {
 }
 
 export default function ShopYarn({ data }: { data: any[] }) {
+  const addToCart = async (itemType: 'product' | 'pattern', itemId: string) => {
+  const res = await fetch('/api/cart', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ itemType, itemId, quantity: 1 }),
+  })
+
+  if (res.ok) {
+    toast.success('Added to cart!')
+  } else {
+    toast.error('Failed to add to cart')
+  }
+}
+
   return (
     <section className="my-6 w-full mx-auto max-w-screen-2xl">
       <div className="px-2 sm:px-4 lg:px-8">
@@ -41,7 +58,7 @@ export default function ShopYarn({ data }: { data: any[] }) {
               <h3 className="text-sm text-gray-700 line-clamp-2">{product.description}</h3>
               <p className="font-semibold mt-1">IDR{product.price.toLocaleString('id-ID')}</p>
               <div className="flex flex-col sm:flex-row sm:justify-between gap-2 mt-4 w-full">
-                <ButtonBlack className="w-full sm:w-1/2">+ Add to Cart</ButtonBlack>
+                <ButtonBlack className="w-full sm:w-1/2" onClick={() => addToCart('product', product.id)}>+ Add to Cart</ButtonBlack>
                 <ButtonWhite className="w-full sm:w-1/2" onClick={() => router.push(`/shop-yarn/${product.id}`)}>Details</ButtonWhite>
               </div>
             </div>

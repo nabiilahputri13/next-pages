@@ -41,3 +41,22 @@ export const patterns = pgTable('patterns', {
   rating: integer('rating').notNull().default(5),
   createdAt: timestamp('created_at').defaultNow()
 })
+
+export const carts = pgTable('carts', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  userId: uuid('user_id')
+    .notNull()
+    .references(() => usersTable.id, { onDelete: 'cascade' }),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+})
+
+export const cartItems = pgTable('cart_items', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  cartId: uuid('cart_id')
+    .notNull()
+    .references(() => carts.id, { onDelete: 'cascade' }),
+  itemType: text('item_type').notNull(), // 'product' | 'pattern'
+  itemId: uuid('item_id').notNull(), // refer ke products.id atau patterns.id
+  quantity: integer('quantity').notNull().default(1),
+})
