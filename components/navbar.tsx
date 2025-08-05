@@ -121,7 +121,6 @@ const Navbar = () => {
           <div className="absolute right-4 top-14 w-48 bg-white border rounded shadow-lg text-black z-50">
             <div className="px-4 py-2 border-b">
               <p className="font-semibold">{session.user.name}</p>
-              <p className="text-sm text-gray-500">{session.user.email}</p>
             </div>
             {/* Cart pindah ke dropdown */}
             <Link
@@ -130,6 +129,7 @@ const Navbar = () => {
             >
               🛒 Cart
             </Link>
+            <button className="w-full text-left px-4 py-2 hover:bg-gray-100">Workshop</button>
             <button
               onClick={() => signOut()}
               className="w-full text-left px-4 py-2 hover:bg-gray-100"

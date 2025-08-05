@@ -60,3 +60,15 @@ export const cartItems = pgTable('cart_items', {
   itemId: uuid('item_id').notNull(), // refer ke products.id atau patterns.id
   quantity: integer('quantity').notNull().default(1),
 })
+
+export const workshops = pgTable('workshops', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  name: text('name').notNull(),
+  label: text('label').notNull(),
+  price: integer('price').notNull(),
+  place: text('place').notNull(),
+  description: text('description'),
+  imageUrl: text('image_url').notNull(),
+  date: timestamp('date').notNull(), // <-- Ubah dari integer ke timestamp
+  createdAt: timestamp('created_at').defaultNow()
+})

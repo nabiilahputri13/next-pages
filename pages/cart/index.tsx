@@ -119,7 +119,7 @@ const handleCheckout = () => {
           {items.map((item) => (
             <div
               key={item.id}
-              className={`flex items-center justify-between gap-4 border p-4 rounded-md ${
+              className={`flex items-center justify-between gap-4 border p-4  ${
                 selectedItems.includes(item.id) ? 'bg-gray-100 border-blue-400' : ''
               }`}
             >
@@ -154,7 +154,22 @@ const handleCheckout = () => {
                   onClick={() => handleQuantity(item.id, -1)}
                   className="border px-3 py-1 hover:bg-black hover:text-white"
                 >−</button>
-                <span>{item.quantity}</span>
+                {/* <span>{item.quantity}</span> */}
+                <input
+  type="number"
+  min={1}
+  value={item.quantity}
+  onChange={(e) => {
+    const newQty = parseInt(e.target.value)
+    if (!isNaN(newQty) && newQty >= 1 && newQty !== item.quantity) {
+      const diff = newQty - item.quantity
+      handleQuantity(item.id, diff)
+    }
+  }}
+  className="w-12 text-center border border-transparent focus:border-black focus:ring-0 px-1 py-0.5 appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+
+  />
+
                 <button
                   onClick={() => handleQuantity(item.id, 1)}
                   className="border px-3 py-1 hover:bg-black hover:text-white"

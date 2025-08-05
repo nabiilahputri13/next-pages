@@ -6,19 +6,27 @@ import { workshops } from '@/lib/db/schema'
 import Image from 'next/image'
 import router from 'next/router'
 import toast from 'react-hot-toast'
+import { requireAdmin } from '@/lib/auth/requireAdmin'
+import { GetServerSidePropsContext } from 'next'
 import { format } from 'date-fns'
 import { id } from 'date-fns/locale'
 
-export async function getServerSideProps() {
-  const raw = await db.select().from(workshops)
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const auth = await requireAdmin(context)
+  if ('redirect' in auth) return auth
 
-  const data = raw.map((p) => ({
-    ...p,
-    createdAt: p.createdAt?.toISOString(),
-    date: p.date?.toISOString(), // Convert Date object to string
+  const raw = await db.select().from(workshops)
+  const data = raw.map((w) => ({
+    ...w,
+    createdAt: w.createdAt?.toISOString(),
+    date: w.date?.toISOString(),
   }))
 
-  return { props: { data } }
+  return {
+    props: {
+      data,
+    },
+  }
 }
 
 export default function WorkshopsPage({ data }: { data: any[] }) {
@@ -43,19 +51,16 @@ export default function WorkshopsPage({ data }: { data: any[] }) {
   return (
     <section className="my-6 px-4 mx-auto max-w-screen-xl">
       <div className="p-8">
-        {/* Uncomment this block if you want to show title and add button */}
-        {/* 
         <div className="flex flex-col sm:flex-row sm:justify-between gap-2 mb-6 w-full">
           <h1 className="text-2xl font-bold">Workshop List</h1>
           <ButtonBlack onClick={() => router.push('/admin/create-workshop')}>
             + Add New Workshop
           </ButtonBlack>
         </div>
-        */}
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {data.map((workshop) => (
-            <div key={workshop.id} className="p-4 w-full">
+            <div key={workshop.id} className="border p-4 w-full">
               <Image
                 src={workshop.imageUrl}
                 alt={workshop.name}
@@ -68,9 +73,11 @@ export default function WorkshopsPage({ data }: { data: any[] }) {
               </span>
               <h2 className="font-bold text-lg mt-2">{workshop.name}</h2>
               <h3 className="text-sm text-gray-700 line-clamp-2">{workshop.description}</h3>
-
+              
               <p className="font-semibold mt-1">IDR{workshop.price.toLocaleString('id-ID')}</p>
-              <p className="text-sm text-gray-500 mt-1">📍 {workshop.place}</p>
+              <p className="text-sm text-gray-500 mt-1">
+                📍 {workshop.place}
+              </p>
               <p className="text-sm text-gray-500">
                 📅 {format(new Date(workshop.date), "EEEE, MMMM do yyyy", { locale: id })}
               </p>
@@ -79,13 +86,13 @@ export default function WorkshopsPage({ data }: { data: any[] }) {
                   className="w-full sm:w-1/2"
                   onClick={() => router.push(`/admin/update-workshop/${workshop.id}`)}
                 >
-                  Register
+                  Update
                 </ButtonBlack>
                 <ButtonWhite
                   className="w-full sm:w-1/2"
                   onClick={() => handleDelete(workshop.id)}
                 >
-                  Details
+                  Delete
                 </ButtonWhite>
               </div>
             </div>
